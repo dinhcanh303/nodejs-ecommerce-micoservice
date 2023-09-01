@@ -20,26 +20,19 @@ class AccessService {
   /*
     check this token user
    */
-  static handleRefreshToken = async (refreshToken) => {
-    const foundToken = await KeyTokenService.findByRefreshTokenUsed(refreshToken);
-    if (foundToken){
-      const {userId,email}= await verifyJWT(refreshToken,foundToken.privateKey);
-      console.log({userId,email})
-      //delete all token in keyStore
+  static handleRefreshToken = async ({refreshToken,user,keyStore}) => {
+    const {userId , email} = user;
+    if(keyStore.refreshTokensUsed.includes(refreshToken)){
       await KeyTokenService.deleteKeyById(userId);
       throw new ForbiddenError('Something wrong happen !! Please login again');
     }
-    const holderToken = await KeyTokenService.findByRefreshToken(refreshToken);
-    if(!holderToken) throw new AuthFailureError('Shop not registered');
-    const {userId,email}= await verifyJWT(refreshToken,holderToken.privateKey);
-    //check User Id 
-    console.log('[2]--->',{userId,email})
+    if(keyStore.refreshToken !== refreshToken) throw new AuthFailureError('Shop not registered');
     const foundShop = await findByEmail({email});
     if(!foundShop) throw new AuthFailureError('Shop not registered');
     //create 1 token pair
-    const tokens = await createTokenPair({userId,email},holderToken.publicKey,holderToken.privateKey);
+    const tokens = await createTokenPair({userId,email},keyStore.publicKey,keyStore.privateKey);
     //update tokens
-    await holderToken.updateOne({
+    await keyStore.update({
       $set: {
         refreshToken:tokens.refreshToken,
       },
@@ -48,10 +41,9 @@ class AccessService {
       }
     })
     return {
-      user: {userId,email},
+      user:user,
       tokens
     }
-    
   }
   static logout = async (keyStore) => {
      const delKey = await KeyTokenService.removeKeyById(keyStore._id)
