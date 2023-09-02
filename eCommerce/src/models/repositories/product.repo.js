@@ -7,12 +7,30 @@ const {
   clothing,
   furniture,
 } = require("../product.model");
+const { selectData } = require("../../utils");
 
 const findAllDraftsForShop = async ({ query, limit, skip }) => {
   return await queryProduct({ query, limit, skip });
 };
 const findAllPublishedForShop = async ({ query, limit, skip }) => {
   return await queryProduct({ query, limit, skip });
+};
+const findAllProducts = async ({ limit, sort, page, filter, select }) => {
+  const skip = (page - 1) * limit;
+  const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 };
+  return await product
+    .find(filter)
+    .sort(sortBy)
+    .skip(skip)
+    .limit(limit)
+    .select(selectData(select))
+    .lean();
+};
+const findProduct = async ({ product_id, unSelect }) => {
+  return await product
+    .findById(product_id)
+    .select(selectData(unSelect, true))
+    .lean();
 };
 const publishProductByShop = async ({ product_shop, product_id }) => {
   const foundShop = await product.findOne({
@@ -69,4 +87,6 @@ module.exports = {
   findAllPublishedForShop,
   unPublishProductByShop,
   searchProductByUSer,
+  findAllProducts,
+  findProduct,
 };
