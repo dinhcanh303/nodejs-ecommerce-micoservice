@@ -20,8 +20,8 @@ const {
 //define Factory Pattern class to create product
 class ProductFactory {
   /*
-        type: 'Clothing',
-    */
+  type: 'Clothing',
+  */
   static productRegistry = {};
   static registerProductType(type, classRef) {
     ProductFactory.productRegistry[type] = classRef;
@@ -61,7 +61,9 @@ class ProductFactory {
   static async findProduct({ product_id }) {
     return await findProduct({ product_id, unSelect: ["__v"] });
   }
-  static async updateProduct() {}
+  static async updateProduct() {
+    return await updateProduct();
+  }
 }
 /*
 product_name: {

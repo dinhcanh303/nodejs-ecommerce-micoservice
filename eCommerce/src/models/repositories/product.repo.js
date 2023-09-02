@@ -32,6 +32,7 @@ const findProduct = async ({ product_id, unSelect }) => {
     .select(selectData(unSelect, true))
     .lean();
 };
+const updateProduct = async () => {};
 const publishProductByShop = async ({ product_shop, product_id }) => {
   const foundShop = await product.findOne({
     product_shop: new Types.ObjectId(product_shop),
