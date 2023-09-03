@@ -13,7 +13,20 @@ class ProductController {
       }),
     }).send(res);
   };
-  //POST
+  //PATCH
+  updateProduct = async (req, res, next) => {
+    new SuccessResponse({
+      message: "Updated Product Shop successfully",
+      metadata: await ProductService.updateProduct(
+        req.body.product_type,
+        req.params.productId,
+        {
+          ...req.body,
+          product_shop: req.user.userId,
+        }
+      ),
+    }).send(res);
+  };
 
   publishProductByShop = async (req, res, next) => {
     new SuccessResponse({
@@ -101,7 +114,7 @@ class ProductController {
     new SuccessResponse({
       message: "Get detail products",
       metadata: await ProductService.findProduct({
-        product_id: req.params.product_id,
+        product_id: req.params.productId,
       }),
     }).send(res);
   };

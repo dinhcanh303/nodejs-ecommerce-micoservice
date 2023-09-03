@@ -6,7 +6,7 @@ const productController = require("../../controllers/product.controller");
 const router = express.Router();
 
 router.get("/", asyncHandler(productController.findAllProducts));
-router.get("/:product_id", asyncHandler(productController.findProduct));
+router.get("/:productId", asyncHandler(productController.findProduct));
 router.post(
   "/search/:keySearch",
   asyncHandler(productController.getListSearchProduct)
@@ -15,6 +15,7 @@ router.post(
 router.use(authentication);
 //create product
 router.post("/", asyncHandler(productController.createProduct));
+router.patch("/:productId", asyncHandler(productController.updateProduct));
 router.post(
   "/publish/:id",
   asyncHandler(productController.publishProductByShop)

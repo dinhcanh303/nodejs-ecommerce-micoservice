@@ -1,6 +1,7 @@
 "use strict";
 
 const { BadRequestError } = require("../core/error.response");
+const { findByIdAndUpdate } = require("../models/keyToken.model");
 const {
   product,
   clothing,
@@ -15,7 +16,9 @@ const {
   searchProductByUSer,
   findAllProducts,
   findProduct,
+  updateProductById,
 } = require("../models/repositories/product.repo");
+const { removeUndefinedObject, updateNestedObjectParser } = require("../utils");
 
 //define Factory Pattern class to create product
 class ProductFactory {
@@ -31,6 +34,12 @@ class ProductFactory {
     if (!productClass)
       throw new BadRequestError(`Invalid Product type ${type}`);
     return new productClass(payload).createProduct();
+  }
+  static async updateProduct(type, productId, payload) {
+    const productClass = ProductFactory.productRegistry[type];
+    if (!productClass)
+      throw new BadRequestError(`Invalid Product type ${type}`);
+    return new productClass(payload).updateProduct(productId);
   }
   static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
     const query = { product_shop, isDraft: true };
@@ -58,11 +67,8 @@ class ProductFactory {
   }) {
     return await findAllProducts({ limit, sort, page, filter, select });
   }
-  static async findProduct({ product_id }) {
-    return await findProduct({ product_id, unSelect: ["__v"] });
-  }
-  static async updateProduct() {
-    return await updateProduct();
+  static async findProduct({ productId }) {
+    return await findProduct({ productId, unSelect: ["__v"] });
   }
 }
 /*
@@ -118,8 +124,19 @@ class Product {
     this.product_shop = product_shop;
     this.product_attributes = product_attributes;
   }
-  async createProduct(product_id) {
-    return await product.create({ ...this, _id: product_id });
+  async createProduct(productId) {
+    const newProduct = await product.create({ ...this, _id: productId });
+    if (newProduct) {
+    }
+    return newProduct;
+  }
+  //why???
+  async updateProduct(productId, bodyUpdate) {
+    return await updateProductById({
+      productId,
+      bodyUpdate,
+      model: product,
+    });
   }
 }
 //define sub-class for different product types Clothing
@@ -133,6 +150,32 @@ class Clothing extends Product {
     const newProduct = await super.createProduct(newClothing._id);
     if (!newProduct) throw BadRequestError("Create new Product error");
     return newProduct;
+  }
+  async updateProduct(productId) {
+    /*
+     {
+        a: undefined,
+        b: null,
+     }
+     */
+    /** 1. remove attr has null undefined
+     * 2. check update where?
+     *
+     */
+    const objectParams = removeUndefinedObject(this);
+    if (objectParams.product_attributes) {
+      //update child
+      await updateProductById({
+        productId,
+        bodyUpdate: updateNestedObjectParser(objectParams),
+        model: clothing,
+      });
+    }
+    const updatedProduct = await super.updateProduct(
+      productId,
+      updateNestedObjectParser(objectParams)
+    );
+    return updatedProduct;
   }
 }
 class Electronic extends Product {
