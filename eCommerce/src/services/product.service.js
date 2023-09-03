@@ -8,6 +8,7 @@ const {
   electronic,
   furniture,
 } = require("../models/product.model");
+const { insertInventory } = require("../models/repositories/inventory.repo");
 const {
   findAllDraftsForShop,
   publishProductByShop,
@@ -127,6 +128,12 @@ class Product {
   async createProduct(productId) {
     const newProduct = await product.create({ ...this, _id: productId });
     if (newProduct) {
+      //add product stock in inventories collection
+      await insertInventory({
+        productId: newProduct._id,
+        shopId: this.product_shop,
+        stock: this.product_quantity,
+      });
     }
     return newProduct;
   }
