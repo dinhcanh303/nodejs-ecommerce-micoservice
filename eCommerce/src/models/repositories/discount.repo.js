@@ -1,12 +1,12 @@
 "use strict";
 
-const { selectData } = require("../../utils");
+const { selectData, convertObjectIdMongodb } = require("../../utils");
 const discount = require("../discount.model");
 
-const findDiscountCode = async ({ code, shopId }) => {
+const findDiscountCode = async ({ codeId, shopId }) => {
   return await discount
     .findOne({
-      discount_code: code,
+      discount_code: codeId,
       discount_shop_id: convertObjectIdMongodb(shopId),
     })
     .lean();

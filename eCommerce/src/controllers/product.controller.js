@@ -66,6 +66,7 @@ class ProductController {
    * @return { JSON }
    */
   getAllDraftsForShop = async (req, res, next) => {
+    console.log(123);
     new SuccessResponse({
       message: "Get all draft products",
       metadata: await ProductService.findAllDraftsForShop({

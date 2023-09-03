@@ -2,32 +2,32 @@
 const express = require("express");
 const { asyncHandler } = require("../../helpers/asyncHandler");
 const { authentication } = require("../../auth/authUtils");
-const productController = require("../../controllers/product.controller");
+const ProductController = require("../../controllers/product.controller");
 const router = express.Router();
 
-router.get("/", asyncHandler(productController.findAllProducts));
-router.get("/:productId", asyncHandler(productController.findProduct));
+router.get("/", asyncHandler(ProductController.findAllProducts));
+router.get("/:productId", asyncHandler(ProductController.findProduct));
 router.post(
   "/search/:keySearch",
-  asyncHandler(productController.getListSearchProduct)
+  asyncHandler(ProductController.getListSearchProduct)
 );
 //authentication
 router.use(authentication);
 //create product
-router.post("/", asyncHandler(productController.createProduct));
-router.patch("/:productId", asyncHandler(productController.updateProduct));
+router.post("/", asyncHandler(ProductController.createProduct));
+router.patch("/:productId", asyncHandler(ProductController.updateProduct));
 router.post(
   "/publish/:id",
-  asyncHandler(productController.publishProductByShop)
+  asyncHandler(ProductController.publishProductByShop)
 );
 router.post(
   "/unpublish/:id",
-  asyncHandler(productController.unPublishProductByShop)
+  asyncHandler(ProductController.unPublishProductByShop)
 );
 //Query
-router.get("/drafts/all", asyncHandler(productController.getAllDraftsForShop));
+router.get("/drafts/all", asyncHandler(ProductController.getAllDraftsForShop));
 router.get(
   "/published/all",
-  asyncHandler(productController.getAllPublishedForShop)
+  asyncHandler(ProductController.getAllPublishedForShop)
 );
 module.exports = router;

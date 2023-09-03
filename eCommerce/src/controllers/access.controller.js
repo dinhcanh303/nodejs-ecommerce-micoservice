@@ -34,6 +34,7 @@ class AccessController {
     }).send(res);
   };
   createApiKey = async (req, res, next) => {
+    console.log(123);
     new Created({
       message: "Created api key successfully",
       metadata: await createApiKey(),
