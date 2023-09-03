@@ -149,6 +149,9 @@ class Clothing extends Product {
     if (!newClothing) throw BadRequestError("Create new Clothing error");
     const newProduct = await super.createProduct(newClothing._id);
     if (!newProduct) throw BadRequestError("Create new Product error");
+    /**
+     * test
+     */
     return newProduct;
   }
   async updateProduct(productId) {
