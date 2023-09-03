@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 const { Schema, model } = require("mongoose");
 
 const DOCUMENT_NAME = "Key";
-const COLLECTION_NAME = "Keys";
+const COLLECTION_NAME = "keys";
 
 // Declare the Schema of the Mongo model
 const keyTokenSchema = new Schema(
@@ -21,7 +21,7 @@ const keyTokenSchema = new Schema(
       type: String,
       required: true,
     },
-    refreshToken:{
+    refreshToken: {
       type: String,
       required: true,
     },

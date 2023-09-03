@@ -37,42 +37,49 @@ class AccessService {
         const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", {
           modulusLength: 4096,
           publicKeyEncoding: {
-            type: 'pkcs1', //Public key CryptoGraphy Standards!
-            format: 'pem',
+            type: "pkcs1", //Public key CryptoGraphy Standards!
+            format: "pem",
           },
           privateKeyEncoding: {
-            type: 'pkcs1', //Public key CryptoGraphy Standards!
-            format: 'pem',
-          }
+            type: "pkcs1", //Public key CryptoGraphy Standards!
+            format: "pem",
+          },
         });
-        console.log({privateKey, publicKey});
+        console.log({ privateKey, publicKey });
         const publicKeyString = await KeyTokenService.createKeyToken({
           userId: newShop._id,
-          publicKey
-        })
-        if(!publicKeyString){
+          publicKey,
+        });
+        if (!publicKeyString) {
           return {
-            code: 'xxxx',
-            message: 'publicKeyString error'
-          }
+            code: "xxxx",
+            message: "publicKeyString error",
+          };
         }
-        console.log(`publicKeyString::`,publicKeyString);
+        console.log(`publicKeyString::`, publicKeyString);
         const publicKeyObject = crypto.createPublicKey(publicKeyString);
-        console.log(`publicKeyObject::`,publicKeyObject);
-        const tokens = await createTokenPair({userId: newShop._id,email},publicKeyObject,privateKey);
-        console.log(`Created Token Success::`,tokens);
+        console.log(`publicKeyObject::`, publicKeyObject);
+        const tokens = await createTokenPair(
+          { userId: newShop._id, email },
+          publicKeyObject,
+          privateKey
+        );
+        console.log(`Created Token Success::`, tokens);
         return {
           code: 201,
           metadata: {
-            shop: getInfoData({fields: ['_id','name','email'],object: newShop}),
-            tokens
-          }
-        }
+            shop: getInfoData({
+              fields: ["_id", "name", "email"],
+              object: newShop,
+            }),
+            tokens,
+          },
+        };
       }
       return {
-        code : 201,
+        code: 201,
         metadata: null,
-      }
+      };
     } catch (error) {
       return {
         code: "xxx",

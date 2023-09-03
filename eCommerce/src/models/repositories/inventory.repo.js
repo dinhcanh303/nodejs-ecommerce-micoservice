@@ -1,5 +1,6 @@
 "use strict";
 
+const { convertObjectIdMongodb } = require("../../utils");
 const inventory = require("../inventory.model");
 const { Types } = require("mongoose");
 const insertInventory = async ({
@@ -9,7 +10,7 @@ const insertInventory = async ({
   location = "unknown",
 }) => {
   return await inventory.create({
-    inven_product_id: new Types.ObjectId(productId),
+    inven_product_id: convertObjectIdMongodb(productId),
     inven_shop_id: shopId,
     inven_location: location,
     inven_stock: stock,

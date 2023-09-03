@@ -7,7 +7,7 @@ const {
   clothing,
   furniture,
 } = require("../product.model");
-const { selectData } = require("../../utils");
+const { selectData, convertObjectIdMongodb } = require("../../utils");
 
 const findAllDraftsForShop = async ({ query, limit, skip }) => {
   return await queryProduct({ query, limit, skip });
@@ -44,8 +44,8 @@ const updateProductById = async ({
 };
 const publishProductByShop = async ({ product_shop, product_id }) => {
   const foundShop = await product.findOne({
-    product_shop: new Types.ObjectId(product_shop),
-    _id: new Types.ObjectId(product_id),
+    product_shop: convertObjectIdMongodb(product_shop),
+    _id: convertObjectIdMongodb(product_id),
   });
   if (!foundShop) return null;
   foundShop.isDraft = false;
@@ -55,8 +55,8 @@ const publishProductByShop = async ({ product_shop, product_id }) => {
 };
 const unPublishProductByShop = async ({ product_shop, product_id }) => {
   const foundShop = await product.findOne({
-    product_shop: new Types.ObjectId(product_shop),
-    _id: new Types.ObjectId(product_id),
+    product_shop: convertObjectIdMongodb(product_shop),
+    _id: convertObjectIdMongodb(product_id),
   });
   if (!foundShop) return null;
   foundShop.isDraft = true;
