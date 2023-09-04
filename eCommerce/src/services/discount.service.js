@@ -85,11 +85,11 @@ class DiscountService {
     code,
     shopId,
     userId,
-    limit,
-    page,
+    limit = 50,
+    page = 1,
   }) {
     //create index for discount_code
-    const foundDisCount = await findDiscountCode({ shopId, code });
+    const foundDisCount = await findDiscountCode({ shopId, codeId: code });
     if (!foundDisCount || !foundDisCount.discount_is_active)
       throw new NotFoundError("Discount not exist");
     const { discount_applies_to, discount_product_ids } = foundDisCount;
@@ -155,6 +155,10 @@ class DiscountService {
       discount_start_date,
       discount_end_date,
       discount_min_order_value,
+      discount_max_uses_per_user,
+      discount_users_used,
+      discount_type,
+      discount_value,
     } = foundDisCount;
     if (!discount_is_active) throw new NotFoundError("Discount expired!");
     if (!discount_max_uses) throw new NotFoundError("Discount are out!");
